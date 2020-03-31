@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>test</title>
+    <style>
+        .d1 {
+            width: 300px;
+            height: 300px;
+            padding: 20px;
+            border: 1px solid grey;
+        }
+    </style>
+</head>
+<body>
+<button id='update'>update</button>
+<button id='add'>add/button>
+<button id='del'>del</button>
+</body>
+<script>
+    window.onload = function () {
+       let width = 400;
+       let height = 400;
+       let sorueData = [50, 60, 70, 55, 46, 33, 80];
+       let xOrdinal = [1, 2, 3, 4, 5, 6, 7]
+       const p = {t: 20, r: 20, b: 20, l: 20}
+       let svg = d3.select('body')
+                    .append('svg')
+                    .attr('width', width)
+                    .attr('height', height);
+      let rectStep = 5;
+      let rectWidth = (width - p.l - p.r - rectStep * 2) / sorueData.length - rectStep;
+      let ticList = xOrdinal.map((item, index) => {
+          return (rectStep + rectWidth) * (index + 0.5);
+      })
+      console.log(d3, rectWidth, 99, ticList);
+      let linerScale = d3.scaleLinear()
+                        .domain([ d3.max(sorueData), 0])
+                        .range([0, width - p.l - p.r])
+                        // .clamp(true)
+      let axisLeft = d3.axisLeft(linerScale)
+      let gyAxios = svg.append('g')
+                        .attr('transform', 'translate(' + p.l +',' + p.t +')')
+                        // .call(axisLeft)
+     
+
+      let scaleOrdinal = d3.scaleOrdinal()
+                        .domain(xOrdinal)
+                        .range(ticList)
+      let axisBottom = d3.axisBottom(scaleOrdinal)
+      let gxAxios = svg.append('g')
+                        .attr('transform', 'translate(' + p.l +',' + (height - p.b) +')')
+                        // .call(axisBottom)
+    //   console.log(scaleOrdinal.range, 88)
+    //   console.log(d3.min(sorueData), d3.max(sorueData), linerScale(500), 99);
+
+    //    svg.append('circle')
+    //         .attr('cx', 50)
+    //         .attr('cy', 50)
+    //         .attr('r', 40)
+    //         .attr('style', 'fill:#0f0; stroke: red; stroke-width: 2;')
+       svg.selectAll('rect')
+            .data(sorueData)
+            .enter()
+            .append('rect')
+            .attr('style', 'fill:#0f0; stroke: red; stroke-width: 0;')
+            .attr('width', rectWidth)
+            .attr('height', function (d, i) {return d})
+            .attr('x', function (d, i) {console.log(d, i, 990); return (p.l + rectStep + i * (rectWidth + rectStep))})
+            .attr('y', function (d, i) {return (height - p.l -d)})
+
+      svg.selectAll('text')
+            .data(sorueData)
+            .enter()
+            .append('text')
+            .attr('text-anchor', 'middle')
+            .attr('style', 'font-size: 14px; fill: red;')
+            .attr('x', function (d, i) { console.log(d, i); return (p.l + rectStep + i * (rectStep + rectWidth))})
+            .attr('y', function (d, i) {return (height - p.b - d)})
+            .attr('dx', (rectStep + rectWidth) / 2)
+            .attr('dy', '-1em')
+            .text(function (d) {return d})
+        axisLeft(gyAxios) 
+        axisBottom(gxAxios)  
+       function draw () {
+           console.log(rectWidth)
+           rectWidth = (width - p.l - p.r - rectStep * 2) / sorueData.length - rectStep;
+           console.log(rectWidth)
+           let update = svg.selectAll('rect').data(sorueData)
+           update
+            .attr('width', rectWidth)
+            .attr('height', function (d, i) {return d})
+            .attr('x', function (d, i) { return (p.l + rectStep + i * (rectWidth + rectStep))})
+            .attr('y', function (d, i) {return (height - p.b - d)})
+           let enterItem = update.enter()
+           enterItem.append('rect')
+            .attr('style', 'fill:#0f0; stroke: red; stroke-width: 0;')
+            .attr('width', rectWidth)
+            .attr('height', function (d, i) {return d})
+            .attr('x', function (d, i) { return (p.l + rectStep + i *  (rectStep +rectWidth))})
+            .attr('y', function (d, i) {return (height - p.b - d)})
+           let exitItem = update.exit()
+           exitItem.remove()
+           let updateText = svg.selectAll('text').data(sorueData)
+           updateText
+            .attr('text-anchor', 'middle')
+            .attr('style', 'font-size: 14px; fill: red;')
+            .attr('x', function (d, i) { return (p.l + rectStep + i * (rectStep + rectWidth))})
+            .attr('y', function (d, i) {return (height - p.b - d)})
+            .attr('dx', (rectStep + rectWidth) / 2)
+            .attr('dy', '-1em')
+            .text(function (d) {return d})
+           let enterText = updateText.enter()
+           enterText.append('text')
+            .attr('text-anchor', 'middle')
+            .attr('style', 'font-size: 14px; fill: red;')
+            .attr('x', function (d, i) { return (p.l + rectStep + i * (rectStep + rectWidth))})
+            .attr('y', function (d, i) {return (height - p.b - d)})
+            .attr('dx', (rectStep + rectWidth) / 2)
+            .attr('dy', '-1em')
+            .text(function (d) {return d})
+           let exitText = updateText.exit()
+           exitText.remove()
+       }
+       document.getElementById('update').onclick = function () {
+            d3.shuffle(sorueData);
+            draw();
+       }
+       document.getElementById('add').onclick = function () {
+           sorueData.push(Math.floor(100 * Math.random()));
+           xOrdinal.push(sorueData.length);
+           draw();
+       }
+       document.getElementById('del').onclick = function () {
+           sorueData.pop();
+           xOrdinal.pop();
+           draw();
+       }
+     }
+</script>
+<script src="https://cdn.bootcss.com/d3/4.13.0/d3.js"></script>
+</html>
