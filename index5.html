@@ -14,12 +14,12 @@
 </head>
 <body>
 <button id='update'>update</button>
-<button id='add'>add/button>
+<button id='add'>add</button>
 <button id='del'>del</button>
 </body>
 <script>
     window.onload = function () {
-        let p = {t: 20, l: 20, r: 20, b: 20};
+        let p = {t: 20, l: 30, r: 20, b: 20};
         let width = 400;
         let height = 400;
         let data = [50, 60, 70, 55, 46, 33, 80];
@@ -40,10 +40,11 @@
                 .attr('style', 'fill: #0f0')
             
        let xAxis = d3.axisBottom(xScale)
-       svg.append('g').attr('transform', 'translate(' + p.l + ',' + (p.t + height) + ')').attr('class', 'gx').call(xAxis)
+       let xgAxis = svg.append('g').attr('transform', 'translate(' + p.l + ',' + (p.t + height) + ')').attr('class', 'gx').call(xAxis)
        yScale.range([height, 0])
        let yAxis = d3.axisLeft(yScale)
-       svg.append('g').attr('transform', 'translate(' + p.l + ',' + p.t + ')').attr('class', 'gy').call(yAxis);
+       let ygAxis = svg.append('g').attr('transform', 'translate(' + p.l + ',' + p.t + ')').attr('class', 'gy').call(yAxis);
+    //    console.log(gzj, '99999');
        function draw() {
                 yScale.domain([0, 1.2 * d3.max(data)]).range([0, height]);
                 xScale.domain(d3.range(data.length)).range([0, width]);
@@ -72,6 +73,10 @@
                   console.log(yAxis, xAxis, 77);
                 // xAxis(xScale);
                 // yAxis(yScale);
+                yScale.range([height, 0])
+                // yAxis = d3.axisLeft(yScale)
+                ygAxis.call(yAxis);
+                xgAxis.call(xAxis);
             // xAxis = d3.axisBottom(xScale)
             // d3.select('.gx').call()
             // yScale.range([width, 0])
