@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>柱状图</title>
+    <style>
+        .axis line, .axis path {
+           fill: none;
+           stroke: black;
+           stroke-opacity: 0.6;
+        }
+        .axis text {
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+<button id='update'>update</button>
+<button id='add'>add/button>
+<button id='del'>del</button>
+</body>
+<script>
+    window.onload = function () {
+        console.log(d3)
+     
+       let width = 360;
+       let height = 360;
+       let p = {t: 20, r: 20, b: 30, l: 30}
+       let data = [50, 60, 70, 55, 46, 33, 80];
+       let xScale = d3.scale.ordinal()
+                        .domain(d3.range(data.length))
+                        .rangeRoundBands([0, width], 0.2)
+       let yScale = d3.scale.linear()
+                        .domain([0, d3.max(data)])
+                        .range([0, height])
+       // console.log(xScale, yScale, xScale.rangeBand())
+       console.log(yScale(80), 99)
+       let svg = d3.select('body')
+                    .append('svg')
+                    .attr('width', width + p.l + p.r)
+                    .attr('height', height + p.t + p.b)
+       svg.selectAll('.item')
+            .data(data)
+            .enter()
+            .append('rect')
+            .attr('class', 'item')
+            .attr('x', function (d, i) {return p.l + xScale(i)})
+            .attr('y', function (d, i) {return height + p.t -  yScale(d)})
+            .attr('style', 'fill: #0f0')
+            .attr('width', xScale.rangeBand())
+            .attr('height', function (d, i) {return yScale(d)})
+
+       svg.selectAll('.itemText')
+            .data(data)
+            .enter()
+            .append('text')
+            .attr('class', 'itemText')
+            .attr('text-anchor', 'middle')
+            .attr('style', 'font-size: 14px; fill: red;')
+            .attr('x', function(d, i) {return p.l + xScale(i)})
+            .attr('y', function (d, i) {return height + p.t -  yScale(d)})
+            .attr('dy', '1em')
+            .attr('dx', xScale.rangeBand() / 2)
+            .text(function (d, i) {return d})
+            
+
+       yScale.range([height, 0])
+       let yAxios = d3.svg.axis()
+                .scale(yScale)
+                .orient('left')
+                .ticks(5)
+       console.log('translate(' + p.l + ',' + (height +  p.t) +')')
+       svg.append('g')
+                .attr('class', 'axis')
+                .attr('transform', 'translate(' + p.l +', ' + p.t + ')')
+                .call(yAxios)
+       let xAxis = d3.svg.axis()
+                    .scale(xScale)
+                    .orient('bottom')
+       svg.append('g')
+            .attr('class', 'axis')
+            .attr('transform', 'translate(' + p.l +', ' + (height + p.t) + ')')
+            .call(xAxis)
+       document.getElementById('update').onclick = function () {
+           
+            draw();
+       }
+       document.getElementById('add').onclick = function () {
+        
+         
+           draw();
+       }
+       document.getElementById('del').onclick = function () {
+        
+           draw();
+       }
+     }
+</script>
+<script src="https://cdn.bootcss.com/d3/3.5.17/d3.js"></script>
+</html>

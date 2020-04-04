@@ -30,10 +30,10 @@
                     .attr('height', height);
       let rectStep = 5;
       let rectWidth = (width - p.l - p.r - rectStep * 2) / sorueData.length - rectStep;
-      let ticList = xOrdinal.map((item, index) => {
-          return (rectStep + rectWidth) * (index + 0.5);
-      })
-      console.log(d3, rectWidth, 99, ticList);
+    //   let ticList = xOrdinal.map((item, index) => {
+    //       return (rectStep + rectWidth) * (index + 0.5);
+    //   })
+    //   console.log(d3, rectWidth, 99, ticList);
       let linerScale = d3.scaleLinear()
                         .domain([ d3.max(sorueData), 0])
                         .range([0, width - p.l - p.r])
@@ -41,16 +41,17 @@
       let axisLeft = d3.axisLeft(linerScale)
       let gyAxios = svg.append('g')
                         .attr('transform', 'translate(' + p.l +',' + p.t +')')
-                        // .call(axisLeft)
+                        .call(axisLeft)
      
 
-      let scaleOrdinal = d3.scaleOrdinal()
+      let scaleOrdinal = d3.scalePoint()
                         .domain(xOrdinal)
-                        .range(ticList)
+                        .range([0, 360])
+                        // .range(ticList)
       let axisBottom = d3.axisBottom(scaleOrdinal)
       let gxAxios = svg.append('g')
                         .attr('transform', 'translate(' + p.l +',' + (height - p.b) +')')
-                        // .call(axisBottom)
+                        .call(axisBottom)
     //   console.log(scaleOrdinal.range, 88)
     //   console.log(d3.min(sorueData), d3.max(sorueData), linerScale(500), 99);
 
@@ -66,8 +67,8 @@
             .attr('style', 'fill:#0f0; stroke: red; stroke-width: 0;')
             .attr('width', rectWidth)
             .attr('height', function (d, i) {return d})
-            .attr('x', function (d, i) {console.log(d, i, 990); return (p.l + rectStep + i * (rectWidth + rectStep))})
-            .attr('y', function (d, i) {return (height - p.l -d)})
+            .attr('x', function (d, i) {return (p.l + rectStep + i * (rectWidth + rectStep))})
+            .attr('y', function (d, i) {return (linerScale(height - p.l -d))})
 
       svg.selectAll('text')
             .data(sorueData)
@@ -75,8 +76,8 @@
             .append('text')
             .attr('text-anchor', 'middle')
             .attr('style', 'font-size: 14px; fill: red;')
-            .attr('x', function (d, i) { console.log(d, i); return (p.l + rectStep + i * (rectStep + rectWidth))})
-            .attr('y', function (d, i) {return (height - p.b - d)})
+            .attr('x', function (d, i) { return (p.l + rectStep + i * (rectStep + rectWidth))})
+            .attr('y', function (d, i) {return linerScale(height - p.b - d)})
             .attr('dx', (rectStep + rectWidth) / 2)
             .attr('dy', '-1em')
             .text(function (d) {return d})
